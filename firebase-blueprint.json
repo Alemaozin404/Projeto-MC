@@ -1,0 +1,66 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A coin package for the Minecraft server.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "amount": { "type": "number" },
+        "stock": { "type": "number" },
+        "price": { "type": "number" },
+        "bonusPercent": { "type": "number" },
+        "discountPrice": { "type": "number" },
+        "discountExpiry": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "amount", "price"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "A discount coupon code.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "discountPercent": { "type": "number" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["code", "discountPercent"]
+    },
+    "Purchase": {
+      "title": "Purchase",
+      "description": "A record of a user's purchase.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "amountPaid": { "type": "number" },
+        "couponUsed": { "type": "boolean" },
+        "couponCode": { "type": "string" },
+        "purchaseDate": { "type": "string", "format": "date-time" },
+        "quantity": { "type": "number" },
+        "confirmationKey": { "type": "string" },
+        "receiptUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "cancelled", "refunded"] }
+      },
+      "required": ["userId", "productId", "amountPaid", "purchaseDate", "confirmationKey", "status"]
+    }
+  },
+  "firestore": {
+    "/products": {
+      "schema": "Product",
+      "description": "Available coin packages."
+    },
+    "/coupons": {
+      "schema": "Coupon",
+      "description": "Discount coupons."
+    },
+    "/purchases": {
+      "schema": "Purchase",
+      "description": "User purchase history."
+    }
+  }
+}

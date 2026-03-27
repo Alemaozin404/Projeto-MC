@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: products
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required)
+    //   - amount: number (required)
+    //   - price: number (required)
+    //   - bonusPercent: number (optional)
+    //   - discountPrice: number (optional)
+    //   - discountExpiry: string (optional, ISO 8601)
+    //
+    // Collection: coupons
+    // Document ID: auto-generated
+    // Fields:
+    //   - code: string (required)
+    //   - discountPercent: number (required)
+    //   - active: boolean (required)
+    //
+    // Collection: users
+    // Document ID: userId
+    // Fields:
+    //   - role: string (required, 'admin' or 'user')
+    //   - email: string (required)
+    //
+    // Collection: purchases
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required)
+    //   - productId: string (required)
+    //   - productName: string (optional)
+    //   - amountPaid: number (required)
+    //   - couponUsed: boolean (optional)
+    //   - couponCode: string (optional)
+    //   - purchaseDate: string (required, ISO 8601)
+    //   - quantity: number (optional)
+    //   - confirmationKey: string (required)
+    //   - receiptUrl: string (optional)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "meupcminhavida007@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'amount', 'price']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.amount is number && data.amount > 0 &&
+             data.price is number && data.price >= 0.01 && data.price <= 1.50;
+    }
+
+    function isValidCoupon(data) {
+      return data.keys().hasAll(['code', 'discountPercent', 'active']) &&
+             data.code is string && data.code.size() > 0 && data.code.size() < 20 &&
+             data.discountPercent is number && data.discountPercent > 0 && data.discountPercent <= 100 &&
+             data.active is bool;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['role', 'email']) &&
+             data.role in ['admin', 'user'] &&
+             data.email is string;
+    }
+
+    function isValidPurchase(data) {
+      return data.keys().hasAll(['userId', 'productId', 'amountPaid', 'purchaseDate', 'confirmationKey', 'status']) &&
+             data.userId == request.auth.uid &&
+             data.amountPaid is number && data.amountPaid >= 0 &&
+             data.purchaseDate is string &&
+             data.confirmationKey is string && data.confirmationKey.size() > 0 &&
+             data.status in ['pending', 'approved', 'cancelled', 'refunded'] &&
+             data.quantity is number && data.quantity > 0;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) && request.resource.data.role == 'user' || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) && request.resource.data.role == resource.data.role || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true; // Publicly readable
+      allow create, update, delete: if isAdmin() && isValidProduct(request.resource.data);
+    }
+
+    match /coupons/{couponId} {
+      allow read: if isAuthenticated(); // Allow users to read/query coupons
+      allow create, update, delete: if isAdmin() && isValidCoupon(request.resource.data);
+    }
+
+    match /purchases/{purchaseId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && isValidPurchase(request.resource.data);
+      allow update, delete: if isAdmin();
+    }
+  }
+}

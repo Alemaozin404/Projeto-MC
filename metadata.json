@@ -1,0 +1,5 @@
+{
+  "name": "Minecraft Economy Store",
+  "description": "A store for managing Minecraft server economy with coin packages, coupons, and an admin panel.",
+  "requestFramePermissions": []
+}
