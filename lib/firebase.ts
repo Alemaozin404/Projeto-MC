@@ -1,16 +1,29 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocFromServer } from 'firebase/firestore';
-import firebaseConfig from '../firebase-applet-config.json';
 
+// Configuração utilizando Variáveis de Ambiente para total compatibilidade com a Vercel
 const firebaseConfig = {
-  apiKey: "AIzaSyBJLzBgWLsW76zPA_UjqLR_ZEBQNB7PkT0",
-  authDomain: "projeto-mc-38c6a.firebaseapp.com",
-  projectId: "projeto-mc-38c6a",
-  storageBucket: "projeto-mc-38c6a.firebasestorage.app",
-  messagingSenderId: "595489649727",
-  appId: "1:595489649727:web:e66be8c539b3af37bc348a"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
+
+// Inicializa o Firebase
+const app = initializeApp(firebaseConfig);
+
+// Exporta os serviços essenciais
+export const auth = getAuth(app);
+export const db = getFirestore(app); 
+export const googleProvider = new GoogleAuthProvider();
+
+// Força a seleção de conta para evitar que a janela de login feche sozinha
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 export enum OperationType {
   CREATE = 'create',
@@ -63,12 +76,13 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
+// Teste de conexão para verificar se as chaves estão ativas
 async function testConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
     if(error instanceof Error && error.message.includes('the client is offline')) {
-      console.error("Please check your Firebase configuration. ");
+      console.error("Erro de conexão: Verifique as chaves NEXT_PUBLIC no painel da Vercel.");
     }
   }
 }
