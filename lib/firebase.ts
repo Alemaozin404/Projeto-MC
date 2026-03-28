@@ -3,10 +3,14 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChang
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-export const googleProvider = new GoogleAuthProvider();
+const firebaseConfig = {
+  apiKey: "AIzaSyBJLzBgWLsW76zPA_UjqLR_ZEBQNB7PkT0",
+  authDomain: "projeto-mc-38c6a.firebaseapp.com",
+  projectId: "projeto-mc-38c6a",
+  storageBucket: "projeto-mc-38c6a.firebasestorage.app",
+  messagingSenderId: "595489649727",
+  appId: "1:595489649727:web:e66be8c539b3af37bc348a"
+};
 
 export enum OperationType {
   CREATE = 'create',
