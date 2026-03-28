@@ -1,20 +1,27 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🛠️ Projeto-MC
 
-# Run and deploy your AI Studio app
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)
 
-This contains everything you need to run your app locally.
+Uma aplicação web moderna focada na integração de serviços para Minecraft, utilizando tecnologias de ponta para garantir performance e escalabilidade.
 
-View your app in AI Studio: https://ai.studio/apps/a0d9368a-030b-454c-b683-60de6557e1df
+## 🚀 Funcionalidades
 
-## Run Locally
+- [x] Autenticação via Google (Firebase Auth)
+- [x] Gerenciamento de dados em tempo real
+- [x] Interface responsiva com Tailwind CSS
+- [ ] Integração direta com APIs de Servidores (Em breve)
 
-**Prerequisites:**  Node.js
+## 📦 Tecnologias Utilizadas
 
+- **Framework:** Next.js 14
+- **Linguagem:** TypeScript
+- **Backend as a Service:** Firebase (Auth, Firestore, Storage)
+- **Estilização:** Tailwind CSS & PostCSS
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🔧 Como Rodar o Projeto
+
+1. Clone o repositório:
+   ```bash
+   git clone [https://github.com/Alemaozin404/Projeto-MC.git](https://github.com/Alemaozin404/Projeto-MC.git)
